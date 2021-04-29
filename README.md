@@ -8,5 +8,5 @@ Testing chamber for electronics. Will test thermal, moisture, and salt too! Set 
 ## Outputs
   * Relay board, which controls...
   * Immersion heater
-  * Ultrasonic fogger / mister / particle-izer. Needed to get the salt solution airborne.
+  * Ultrasonic fogger / mister / atomizer. Needed to get the salt solution airborne.
   * External fan, USB powered but microcontroller controlled.
