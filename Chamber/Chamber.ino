@@ -9,17 +9,17 @@
 
 // Shut off the system if we get any values outside the expected normal startup range
 #define TEMPERATURE_SHUTOFF_MIN_F 50
-#define TEMPERATURE_SHUTOFF_MAX_F 160
+#define TEMPERATURE_SHUTOFF_MAX_F 170
 // Thermal cycling range
-#define TEMPERATURE_TARGET_MIN_F 100
-#define TEMPERATURE_TARGET_MAX_F 130
+#define TEMPERATURE_TARGET_MIN_F 130
+#define TEMPERATURE_TARGET_MAX_F 160
 // Due to residual heat from the immersion heater, this is about the
 // amount of overshoot that is measured. So cut the heater off early
 #define TEMPERATURE_OVERSHOOT_MAX_F 20
 boolean temperatureGoingUp = true;
 
-#define ULTRASONIC_ATOMIZER_ON_PERIOD_SECS 10
-#define ULTRASONIC_ATOMIZER_OFF_PERIOD_SECS 20
+#define ULTRASONIC_ATOMIZER_ON_PERIOD_SECS ((unsigned long)30)
+#define ULTRASONIC_ATOMIZER_OFF_PERIOD_SECS ((unsigned long)60)
 unsigned long atomizerNextOnTimeMillis = 0;
 unsigned long atomizerNextOffTimeMillis = (ULTRASONIC_ATOMIZER_ON_PERIOD_SECS * 1000);
 boolean atomizerOn = true;
@@ -105,18 +105,26 @@ void loop(void)
     digitalWrite(ULTRASONIC_ATOMIZER_PIN, LOW);
     
   }
-  
+
   // Sporadically turn on atomizer
   // Don't turn off atomizer while heating up
   if (atomizerOn == true && millis() >= atomizerNextOffTimeMillis && temperatureGoingUp != true) {
+    // Turn off atomizer
     atomizerOn = false;
     atomizerNextOnTimeMillis = atomizerNextOffTimeMillis + (ULTRASONIC_ATOMIZER_OFF_PERIOD_SECS * 1000);
-    Serial.println("Atomizer off!");
+    Serial.print("Atomizer off!");
+    Serial.print(atomizerNextOffTimeMillis);
+    Serial.print(",");
+    Serial.println(atomizerNextOnTimeMillis);
     digitalWrite(ULTRASONIC_ATOMIZER_PIN, HIGH);
   } else if (atomizerOn == false && millis() >= atomizerNextOnTimeMillis) {
+    // Turn on atomizer
     atomizerOn = true;
     atomizerNextOffTimeMillis = atomizerNextOnTimeMillis + (ULTRASONIC_ATOMIZER_ON_PERIOD_SECS * 1000);
-    Serial.println("Atomizer on!");
+    Serial.print("Atomizer on!");
+    Serial.print(atomizerNextOffTimeMillis);
+    Serial.print(",");
+    Serial.println(atomizerNextOnTimeMillis);
     digitalWrite(ULTRASONIC_ATOMIZER_PIN, LOW);
   }
   
